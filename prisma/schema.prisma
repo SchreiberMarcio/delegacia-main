@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Criminals {
+  cpf            String    @unique @db.VarChar(11)
+  name           String    @db.VarChar(255)
+  birthDate      DateTime  @map("data_nascimento") @db.Timestamp()
+  address        String    @db.VarChar(255)
+  createdAt      DateTime  @default(now()) @map("criado_em") @db.Timestamp()
+  deleted        Boolean   @default(false) @db.Boolean
+  deletedAt      DateTime? @map("deletado_em") @db.Timestamp()
+
+  @@map("criminosos")
+}
+
+enum CrimeType {
+  Homicide
+  Robbery
+  Trafficking
+  Bribery
+}
+
+model Crimes {
+  id        String    @id @default(uuid()) @db.Uuid
+  type      CrimeType
+  crimeDate DateTime  @map("data_crime") @db.Timestamp()
+  location  String    @db.VarChar(255)
+
+  @@map("crimes")
+}
+
+enum WeaponType {
+  White
+  Firearm
+}
+
+model Weapons {
+  id        String   @id @default(uuid()) @db.Uuid
+  type      WeaponType
+  caliber   Int?     @db.SmallInt
+  serialNumber Int?   @db.Integer
+  description String   @db.VarChar(255)
+
+  @@map("armas")
+}
